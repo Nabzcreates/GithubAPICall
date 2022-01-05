@@ -1,4 +1,7 @@
 import './App.css';
+import axios from 'axios'
+import {useEffect, useState, useRef} from 'react'
+import moment from 'moment';
 
 
 // #1 npm install axios
@@ -14,10 +17,35 @@ import './App.css';
 
 function App() {
 
+  // useEffect(()=>{
+  //   const response = axios.get('https://api.github.com/users/octocat')
+  //   response.then((res)=> console.log(res.data))
+  // }, [])
 
+  const [user, setUser] = useState('octocat')
+  const [userData, setUserData] = useState({})
+//TO DO
+//how to access n get the value of input and setUSer to value
 
+//how do I store the value of input?
 
+  const userRef = useRef()
 
+  useEffect(()=>{
+    const getUser= async()=>{
+      try {
+        const response = await axios.get(`https://api.github.com/users/${user}`)
+        setUserData(response.data)
+        console.log(response.data)
+      }
+      catch(error) {
+        console.log(error)
+      }
+    }
+    return getUser()
+  }, [user])
+
+  
 
   return (
       <div className="App">
@@ -34,9 +62,9 @@ function App() {
 
           <div className="search" id="search_container">
             <img src="./assets/icon-search.svg" alt=""/>
-            <input id ="input" type="text" placeholder="Search Github username..."/>
+            <input ref={userRef} id ="input" type="text" placeholder="Search Github username..."/>
             <div className="search_btn">
-              <button id="search">Search</button>
+              <button onClick={()=>setUser(userRef.current.value)} id="search">Search</button>
             </div>
           </div>
 
@@ -48,7 +76,7 @@ function App() {
     
             <div className="profile">
               <div className="profile_frame">
-                <img id = "avatar"src="./assets/profilePlaceholder.png" alt=""/>
+                <img id = "avatar"src={userData.avatar_url || "./assets/profilePlaceholder.png"} alt=""/>
               </div>
             </div>
 
@@ -58,20 +86,20 @@ function App() {
 
                 <div className="name" >
 
-                  <h3 id = "name">The Octocat</h3>
+                  <h3 id = "name">{userData.name}</h3>
 
                   <div className="username">
-                    <p id="login">@octocat</p>
+                    <p id="login">@{userData.login}</p>
                   </div>
                 </div>
           
                 <div className="date">
-                  <p id="date">Joined 25 Jan 2011</p>
+                  <p id="date">Joined {moment(userData.created_at).format('Do MMM YYYY')}</p>
                 </div>
               </div>
     
               <div className="bio">
-                <p id = "bio">This profile has no bio</p>
+                <p id = "bio">{userData.bio}</p>
               </div>
 
 
@@ -79,17 +107,17 @@ function App() {
 
                 <div className="stats">
                   <p>Repos</p>
-                  <p id="repo">8</p>
+                  <p id="repo">{userData.public_repos}</p>
                 </div>
 
                 <div className="stats">
                   <p>Followers</p>
-                  <p id="followers">4443</p>
+                  <p id="followers">{userData.followers}</p>
                 </div>
 
                 <div className="stats">
                   <p>Following</p>
-                  <p id="following">9</p>
+                  <p id="following">{userData.followers}</p>
                 </div>
 
               </div>
@@ -99,22 +127,22 @@ function App() {
                 <div className="left">
                   <div className="info">
                     <img src="./assets/icon-location.svg" alt=""/>
-                    <p id="location">San Francisco</p>
+                    <p id="location">{userData.location || 'Not available'}</p>
                   </div>
                   <div className="info">
                     <img src="./assets/icon-website.svg" alt=""/>
-                    <a href="link" id = "blog">https://github.blog</a>
+                    <a href="link" id = "blog">{userData.blog || 'Not available'}</a>
                   </div>
                 </div>
 
                 <div className="right">
                   <div className="info">
                     <img src="./assets/icon-twitter.svg" alt=""/>
-                    <p id ="twitter">Not Available</p>
+                    <p id ="twitter">{userData.twitter_username || 'Not available'}</p>
                   </div>
                   <div className="info">
                     <img src="./assets/icon-company.svg" alt=""/>
-                  <p id= "company">@github</p>
+                  <p id= "company">{userData.company || 'Not available'}</p>
                   </div>
                 </div>
 
