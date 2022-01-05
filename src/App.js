@@ -125,7 +125,7 @@ function App() {
               <div className="links_container">
 
                 <div className="left">
-                  <div className="info">
+                 <div className="info">
                     <img src="./assets/icon-location.svg" alt=""/>
                     <p id="location">{userData.location || 'Not available'}</p>
                   </div>
