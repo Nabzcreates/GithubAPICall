@@ -32,6 +32,9 @@
     justify-content: space-between;
 }
 
+.UserInput{
+    width: 100%;
+}
 
 .darkMode {
     display: flex;

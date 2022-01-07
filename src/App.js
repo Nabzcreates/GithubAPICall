@@ -1,7 +1,11 @@
 import './App.css';
 import axios from 'axios'
-import {useEffect, useState, useRef} from 'react'
-import moment from 'moment';
+import {useEffect, useRef} from 'react'
+import Container from './components/Container';
+////////
+import {useDispatch, useSelector} from 'react-redux'
+import {setUserData} from './store/userDataSlice'
+import {setUser} from './store/userSlice'
 
 // #1 npm install axios
 // #2 import axios from './axios'
@@ -16,147 +20,33 @@ import moment from 'moment';
 
 function App() {
 
-  // useEffect(()=>{
-  //   const response = axios.get('https://api.github.com/users/octocat')
-  //   response.then((res)=> console.log(res.data))
-  // }, [])
-
-  const [user, setUser] = useState('octocat')
-  const [userData, setUserData] = useState({})
-//TO DO
-//how to access n get the value of input and setUSer to value
-
-//how do I store the value of input?
+  const dispatch = useDispatch()
 
   const userRef = useRef()
+  
+
+  const user = useSelector(state=> state.user.value)
 
   useEffect(()=>{
     const getUser= async()=>{
       try {
+
         const response = await axios.get(`https://api.github.com/users/${user}`)
-        setUserData(response.data)
-        console.log(response.data)
+    
+        dispatch(setUserData(response.data))
       }
       catch(error) {
         console.log(error)
       }
     }
     return getUser()
-  }, [user])
+  }, [user, dispatch])
 
   
 
   return (
       <div className="App">
-        <div className='container'>
-
-
-          <div className="header">
-            <h4>devfinder</h4>
-            <div className="darkMode" >
-              <p id="modeText">DARK</p>
-              <img src="./assets/icon-moon.svg" id = "dark_btn"alt=""/>
-            </div>        
-          </div>
-
-          <div className="search" id="search_container">
-            <img src="./assets/icon-search.svg" alt=""/>
-            <input ref={userRef} id ="input" type="text" placeholder="Search Github username..."/>
-            <div className="search_btn">
-              <button onClick={()=>setUser(userRef.current.value)} id="search">Search</button>
-            </div>
-          </div>
-
-          <div id="error">
-            <p>User not found</p>
-          </div>
-
-          <div className="content">
-    
-            <div className="profile">
-              <div className="profile_frame">
-                <img id = "avatar"src={userData.avatar_url || "./assets/profilePlaceholder.png"} alt=""/>
-              </div>
-            </div>
-
-            <div className="user">
-
-              <div className="user_info">
-
-                <div className="name" >
-
-                  <h3 id = "name">{userData.name}</h3>
-
-                  <div className="username">
-                    <p id="login">@{userData.login}</p>
-                  </div>
-                </div>
-          
-                <div className="date">
-                  <p id="date">Joined {moment(userData.created_at).format('Do MMM YYYY')}</p>
-                </div>
-              </div>
-    
-              <div className="bio">
-                <p id = "bio">{userData.bio}</p>
-              </div>
-
-
-              <div className="stats_container" id="statistics">
-
-                <div className="stats">
-                  <p>Repos</p>
-                  <p id="repo">{userData.public_repos}</p>
-                </div>
-
-                <div className="stats">
-                  <p>Followers</p>
-                  <p id="followers">{userData.followers}</p>
-                </div>
-
-                <div className="stats">
-                  <p>Following</p>
-                  <p id="following">{userData.followers}</p>
-                </div>
-
-              </div>
-
-              <div className="links_container">
-
-                <div className="left">
-                 <div className="info">
-                    <img src="./assets/icon-location.svg" alt=""/>
-                    <p id="location">{userData.location || 'Not available'}</p>
-                  </div>
-                  <div className="info">
-                    <img src="./assets/icon-website.svg" alt=""/>
-                    <a href="link" id = "blog">{userData.blog || 'Not available'}</a>
-                  </div>
-                </div>
-
-                <div className="right">
-                  <div className="info">
-                    <img src="./assets/icon-twitter.svg" alt=""/>
-                    <p id ="twitter">{userData.twitter_username || 'Not available'}</p>
-                  </div>
-                  <div className="info">
-                    <img src="./assets/icon-company.svg" alt=""/>
-                  <p id= "company">{userData.company || 'Not available'}</p>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-
-    
-
-    
-    
-    
-          </div>
-
-       </div>
+      <Container userRef = {userRef} setUser = {setUser} setUserData={setUserData} dispatch = {dispatch}/>
      </div>
 
   );
